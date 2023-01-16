@@ -38,7 +38,7 @@ const Home = () => {
   useEffect(() => {
     axios
       .get(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d`,
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=7d`,
       )
       .then(async res => {
         await setData(res.data);
@@ -54,7 +54,7 @@ const Home = () => {
       return ex.id.startsWith(e);
     });
     setSearchedText(newData);
-    setLoaded(false);
+    setLoaded(true);
   };
 
   //charts
@@ -169,8 +169,9 @@ const Home = () => {
           Scroll Up
         </Text>
       </View>
-      {!loaded ? (
-        <ScrollView>
+      {/* {loaded ? ( */}
+      <View style={{overflow: 'hidden'}}>
+        <ScrollView style={{height: 270}}>
           {searchedText.map(element => (
             <View
               key={element.id}
@@ -198,13 +199,14 @@ const Home = () => {
             </View>
           ))}
         </ScrollView>
-      ) : (
+      </View>
+      {/* ) : (
         <ActivityIndicator
           size="large"
           color={COLORS.white}
           style={{marginTop: 150, marginBottom: 50}}
         />
-      )}
+      )} */}
       {loaded ? (
         <View style={{marginBottom: 70, paddingBottom: 10}}>
           <LineChart
@@ -216,13 +218,7 @@ const Home = () => {
             bezier
           />
         </View>
-      ) : (
-        <ActivityIndicator
-          size="large"
-          color={COLORS.white}
-          style={{marginTop: 100, marginBottom: 100}}
-        />
-      )}
+      ) : null}
     </View>
   );
 };

@@ -12,7 +12,8 @@ import {Authcontext} from '../components/context';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {DataContext} from '../App';
-import {SwitchButton} from '../components/balanceInformation';
+import {SwitchButton} from '../components/SwitchButton';
+
 const Settings = () => {
   const {tokenBalance, wallet, tokenUSD} = useContext(DataContext);
 

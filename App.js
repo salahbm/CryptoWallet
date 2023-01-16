@@ -9,17 +9,14 @@ import {COLORS} from './constants';
 import {Authcontext} from './components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {SwitchButton} from './components/SwitchButton';
 import {balanceInformation} from './components/balanceInformation';
-import {SwitchButton} from './components/balanceInformation';
 export const DataContext = React.createContext();
 const App = () => {
   const [tokenBalance, setTokenBalance] = useState('');
   const [wallet, setWallet] = useState(undefined);
-  const [tokenUSD, setTokenUSD] = useState('');
-  const [provider, setProvider] = useState(
-    new ethers.providers.StaticJsonRpcProvider('mainnet'),
-  );
-  const [network, setNetwork] = useState('mainnet');
+  const [tokenUSD, setTokenUSD] = useState(0);
+
   // write a function getwallet data and state using use effect
   useEffect(() => {
     async function getWalletData() {
@@ -52,7 +49,7 @@ const App = () => {
         )
           .then(response => response.json())
           .then(data => data.ethereum.usd);
-        const balanceInUSD = (tokenBalance * exchangeRate).toFixed(9);
+        const balanceInUSD = (tokenBalance * exchangeRate).toFixed(4);
         setTokenUSD(balanceInUSD);
       } catch (error) {
         console.log(error);
@@ -60,26 +57,6 @@ const App = () => {
     }
     getBalanceInUSD();
   });
-
-  // switch networks
-
-  // function SwitchButtonLogic() {
-  //   if (network === 'mainnet') {
-  //     setProvider(
-  //       new ethers.providers.StaticJsonRpcProvider(
-  //         'https://eth-goerli.g.alchemy.com/v2/NmShLyLunzQEWmshUdHRDRRWReqIhmAR',
-  //       ),
-  //     );
-  //     setNetwork('testnet');
-  //   } else {
-  //     setProvider(
-  //       new ethers.providers.StaticJsonRpcProvider(
-  //         'https://eth-mainnet.g.alchemy.com/v2/JWDQNWpuTdABpcaT8qe5vdvEw7KPdl-T',
-  //       ),
-  //     );
-  //     setNetwork('mainnet');
-  //   }
-  // }
 
   const initialLoginState = {
     isLoading: true,
@@ -184,8 +161,7 @@ const App = () => {
   }
   return (
     <Authcontext.Provider value={authContext}>
-      <DataContext.Provider
-        value={{tokenBalance, wallet, tokenUSD, provider, network}}>
+      <DataContext.Provider value={{tokenBalance, wallet, tokenUSD}}>
         <NavigationContainer>
           {loginState.userToken != null ? <Tabs /> : <RootStackScreen />}
         </NavigationContainer>
