@@ -18,7 +18,7 @@ import {Authcontext} from '../components/context';
 
 const SignInScreen = ({navigation}) => {
   const [data, setData] = useState({
-    email: '',
+    username: '',
     password: '',
     check_textInputChange: false,
     secureTextEntry: true,

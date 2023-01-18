@@ -13,6 +13,7 @@ export const COLORS = {
   rose: '#CC3363',
   violent: '#20063B',
   green: '#28ED45',
+  yellow: '#FFE403',
 };
 export const SIZES = {
   // global sizes

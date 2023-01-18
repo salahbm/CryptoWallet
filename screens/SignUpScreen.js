@@ -18,7 +18,7 @@ import {COLORS, icons} from '../constants';
 import createWallet from '../ethersJS/createWallet';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {matrixTransform} from 'react-native-svg/lib/typescript/elements/Shape';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SignUpScreen = ({navigation}) => {
   const [loaded, setLoaded] = useState(true);
   const [wallet, setWallet] = useState({});
@@ -122,7 +122,7 @@ const SignUpScreen = ({navigation}) => {
     const address = wallet.address;
     const privateKey = wallet.privateKey;
 
-    await EncryptedStorage.setItem(
+    await AsyncStorage.setItem(
       'userWallet',
       JSON.stringify({
         mnemonic,
@@ -134,7 +134,7 @@ const SignUpScreen = ({navigation}) => {
     );
 
     console.log('Sucessfully saved');
-    const saved = await EncryptedStorage.getItem('userWallet');
+    const saved = await AsyncStorage.getItem('userWallet');
     console.log(saved);
   }
   return (
@@ -149,7 +149,7 @@ const SignUpScreen = ({navigation}) => {
           }}>
           Create Wallet
         </Text>
-        {loaded ? (
+        {!loaded ? (
           <View
             style={{
               flex: 1,
@@ -290,7 +290,7 @@ const SignUpScreen = ({navigation}) => {
                   {
                     textAlign: 'center',
                     color: 'white',
-                    height: 40,
+                    height: 30,
                   },
                 ]}>
                 Sign in

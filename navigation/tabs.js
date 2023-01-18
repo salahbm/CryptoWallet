@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from '../screens/Home';
@@ -33,11 +34,30 @@ const TransactionsButton = ({children, onPress}) => (
 );
 
 const Tabs = () => {
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', e => {
+      const {routeName} = e.state;
+      if (
+        routeName !== 'Home' &&
+        routeName !== 'TransactionsStack' &&
+        routeName !== 'Settings'
+      ) {
+        navigation.setOptions({tabBarVisible: false});
+      } else {
+        navigation.setOptions({tabBarVisible: true});
+      }
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <Tab.Navigator
       screenOptions={() => ({
         tabBarShowLabel: false,
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           position: 'absolute',
           bottom: 8,

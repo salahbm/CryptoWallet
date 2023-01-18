@@ -39,7 +39,7 @@ const SendScreen = ({navigation}) => {
       value: ethers.utils.parseUnits(amount, 'ether'),
       //value: ethers.utils.parseEther('0.1'),
       // gasPrice: gasPrice,
-      gasPrice: ethers.utils.hexlify(20000000000),
+      gasPrice: ethers.utils.hexlify(5000000000),
 
       gasLimit: ethers.utils.hexlify(21000),
       nonce: await provider.getTransactionCount(wallet.address, 'latest'),

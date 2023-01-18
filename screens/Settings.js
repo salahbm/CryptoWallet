@@ -14,8 +14,16 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {DataContext} from '../App';
 import {SwitchButton} from '../components/SwitchButton';
 
-const Settings = () => {
-  const {tokenBalance, wallet, tokenUSD} = useContext(DataContext);
+const Settings = ({navigation}) => {
+  const {
+    tokenBalance,
+    wallet,
+    tokenUSD,
+    toggleNetwork,
+    netColor,
+    provider,
+    network,
+  } = useContext(DataContext);
 
   const {signOut} = React.useContext(Authcontext);
   return (
@@ -23,8 +31,8 @@ const Settings = () => {
       <View
         style={{
           flexDirection: 'row',
+          justifyContent: 'space-around',
           paddingTop: 50,
-          paddingLeft: 110,
         }}>
         <Text style={styles.header}>Settings</Text>
       </View>
@@ -32,18 +40,10 @@ const Settings = () => {
         style={{
           flexDirection: 'row',
           paddingTop: 10,
-          paddingLeft: 40,
-          flexDirection: 'row',
+          paddingLeft: 50,
+          justifyContent: 'space-between',
         }}>
-        <Image
-          source={icons.user}
-          style={{
-            width: 70,
-            height: 70,
-            tintColor: COLORS.white,
-            marginEnd: 20,
-          }}
-        />
+        <Text style={styles.text}>Welcome:</Text>
         <Text style={styles.text}>{wallet?.email}</Text>
       </View>
       <View
@@ -72,25 +72,117 @@ const Settings = () => {
           justifyContent: 'space-between',
         }}>
         <Text style={styles.text1}>{'Network type'}:</Text>
-        {/* <Text style={[styles.text1, {color: 'orange'}]}>{'Goerli'}</Text> */}
-        <SwitchButton></SwitchButton>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingTop: 20,
+          }}>
+          <Text
+            style={{
+              color: netColor,
+              marginEnd: 30,
+              width: 70,
+              height: 20,
+              backgroundColor: COLORS.white,
+              borderRadius: 5,
+              textAlign: 'center',
+
+              alignItems: 'center',
+            }}>
+            {network}
+          </Text>
+          <TouchableOpacity
+            onPress={toggleNetwork}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+
+              height: 20,
+              backgroundColor: COLORS.white,
+              borderRadius: 40,
+            }}>
+            <Image
+              source={icons.swap}
+              style={{
+                width: 17,
+                height: 17,
+                marginLeft: 2,
+                tintColor: COLORS.black,
+              }}
+            />
+            <Text
+              style={{
+                width: 60,
+                height: 20,
+                backgroundColor: COLORS.white,
+                borderRadius: 40,
+                color: COLORS.black,
+
+                textAlign: 'center',
+              }}>
+              Change
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View
         style={{
           flexDirection: 'row',
-          paddingTop: 300,
+          paddingTop: 10,
+          paddingLeft: 50,
+          justifyContent: 'space-between',
+        }}>
+        <Text style={styles.text1}>{'Create New Account'}:</Text>
+        <TouchableOpacity
+          onPress={async () => {
+            signOut();
+          }}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 20,
+            height: 20,
+            backgroundColor: COLORS.white,
+            borderRadius: 40,
+            marginBottom: 200,
+          }}>
+          <Image
+            source={icons.user}
+            style={{
+              width: 40,
+              height: 40,
+
+              tintColor: COLORS.black,
+            }}
+          />
+          <Text
+            style={{
+              color: COLORS.black,
+              fontSize: 10,
+              alignItems: 'center',
+              marginRight: 10,
+            }}>
+            New User
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View
+        style={{
+          flexDirection: 'row',
+
           paddingLeft: 50,
         }}>
         <TouchableOpacity
           onPress={async () => {
             signOut();
-            await EncryptedStorage.removeItem('userWallet');
           }}>
           <Text
             style={{
               color: COLORS.white,
-              fontSize: 20,
+              fontSize: 15,
 
               marginEnd: 10,
             }}>
@@ -100,8 +192,8 @@ const Settings = () => {
         <Image
           source={icons.logout}
           style={{
-            width: 30,
-            height: 30,
+            width: 25,
+            height: 25,
             tintColor: COLORS.white,
           }}></Image>
       </View>
@@ -125,10 +217,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: COLORS.white,
-    fontSize: 25,
+    fontSize: 20,
     paddingTop: 20,
     marginEnd: 50,
     fontWeight: 'bold',
   },
-  text1: {color: COLORS.white, fontSize: 20, paddingTop: 20},
+  text1: {color: COLORS.white, fontSize: 15, paddingTop: 20},
 });

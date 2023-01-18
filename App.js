@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
-import {ethers} from 'ethers';
-import React, {useEffect, useMemo, useState} from 'react';
+import {ethers, providers} from 'ethers';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {NavigationContainer, useTheme} from '@react-navigation/native';
 import Tabs from './navigation/tabs';
 import RootStackScreen from './screens/RootStackScreen';
@@ -9,37 +9,73 @@ import {COLORS} from './constants';
 import {Authcontext} from './components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {SwitchButton} from './components/SwitchButton';
-import {balanceInformation} from './components/balanceInformation';
+
 export const DataContext = React.createContext();
+
 const App = () => {
-  const [tokenBalance, setTokenBalance] = useState('');
+  const [tokenBalance, setTokenBalance] = useState(0);
   const [wallet, setWallet] = useState(undefined);
   const [tokenUSD, setTokenUSD] = useState(0);
 
-  // write a function getwallet data and state using use effect
-  useEffect(() => {
-    async function getWalletData() {
-      const walletData = await EncryptedStorage.getItem('userWallet');
+  //swap networks
 
-      if (walletData) {
-        setWallet(JSON.parse(walletData));
-      }
+  const [network, setNetwork] = useState('Mainnet');
+  const [provider, setProvider] = useState(
+    new ethers.providers.StaticJsonRpcProvider(
+      'https://eth-mainnet.g.alchemy.com/v2/JWDQNWpuTdABpcaT8qe5vdvEw7KPdl-T',
+    ),
+  );
+  const [netColor, setNetColor] = useState(COLORS.green);
+
+  // function to toggle the network
+  const toggleNetwork = () => {
+    if (network === 'Mainnet') {
+      setProvider(
+        new ethers.providers.StaticJsonRpcProvider(
+          'https://eth-goerli.g.alchemy.com/v2/9fNSQ8sQ7nVqaeqeZeK5ELbs7mW-R3gA',
+        ),
+      );
+      setNetwork('Goerli');
+      setNetColor('orange');
+    } else if (network === 'Goerli') {
+      setProvider(
+        new ethers.providers.StaticJsonRpcProvider(
+          'https://polygon-mumbai.g.alchemy.com/v2/lDL61yz-2Ys5pmxneawlm9GKUwGwRgyW',
+        ),
+      );
+      setNetwork('Polygon');
+      setNetColor(COLORS.powderBlue);
+    } else if (network === 'Polygon') {
+      setProvider(
+        new ethers.providers.StaticJsonRpcProvider(
+          'https://opt-goerli.g.alchemy.com/v2/wWoEinTD6ok4yN7n5ff5wPi4eUIYF4ET',
+        ),
+      );
+      setNetwork('Optimism');
+      setNetColor(COLORS.red);
+    } else {
+      setProvider(
+        new ethers.providers.StaticJsonRpcProvider(
+          'https://eth-mainnet.g.alchemy.com/v2/JWDQNWpuTdABpcaT8qe5vdvEw7KPdl-T',
+        ),
+      );
+      setNetwork('Mainnet');
+      setNetColor(COLORS.green);
     }
-
-    getWalletData();
-  }, []);
+  };
 
   useEffect(() => {
-    async function getBalance() {
-      const currenttokens = await balanceInformation(wallet.address);
-      setTokenBalance(currenttokens);
+    async function getBalance(address) {
+      const balance = (await provider.getBalance(wallet.address)).toString();
+      const formatted = ethers.utils.formatUnits(balance, 'ether');
+
+      setTokenBalance(formatted);
     }
 
     if (wallet !== undefined) {
       getBalance();
     }
-  });
+  }, [provider, wallet]);
 
   useEffect(() => {
     async function getBalanceInUSD(address) {
@@ -57,6 +93,19 @@ const App = () => {
     }
     getBalanceInUSD();
   });
+
+  // write a function getwallet data and state using use effect
+  useEffect(() => {
+    async function getWalletData() {
+      const walletData = await EncryptedStorage.getItem('userWallet');
+
+      if (walletData) {
+        setWallet(JSON.parse(walletData));
+      }
+    }
+
+    getWalletData();
+  }, []);
 
   const initialLoginState = {
     isLoading: true,
@@ -161,7 +210,16 @@ const App = () => {
   }
   return (
     <Authcontext.Provider value={authContext}>
-      <DataContext.Provider value={{tokenBalance, wallet, tokenUSD}}>
+      <DataContext.Provider
+        value={{
+          tokenBalance,
+          wallet,
+          tokenUSD,
+          toggleNetwork,
+          netColor,
+          provider,
+          network,
+        }}>
         <NavigationContainer>
           {loginState.userToken != null ? <Tabs /> : <RootStackScreen />}
         </NavigationContainer>

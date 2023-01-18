@@ -10,9 +10,8 @@ import SignInScreen from './SignInScreen';
 import AddWalletScreen from './AddWalletScreen';
 const Stack = createNativeStackNavigator();
 
-const TransactionsStack = ({navigation}) => (
+const AdditionalStack = ({navigation}) => (
   <Stack.Navigator screenOptions={{headerMode: 'none', headerShown: false}}>
-    <Stack.Screen name="Transactions" component={Transactions} />
     <Stack.Screen name="SendScreen" component={SendScreen} />
     <Stack.Screen name="ReceiveScreen" component={ReceiveScreen} />
     <Stack.Screen name="QrScreen" component={QrScreen} />
@@ -21,4 +20,4 @@ const TransactionsStack = ({navigation}) => (
     <Stack.Screen name="AddWalletScreen" component={AddWalletScreen} />
   </Stack.Navigator>
 );
-export default TransactionsStack;
+export default AdditionalStack;

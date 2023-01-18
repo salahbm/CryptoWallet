@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import React, {useContext, useEffect, useState} from 'react';
-
+import Charts from '../components/Charts';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {LineChart} from 'react-native-chart-kit';
+import {LineChart, Grid} from 'react-native-chart-kit';
 import {COLORS, icons} from '../constants';
 
 const dimentions = Dimensions.get('screen');
@@ -217,6 +217,7 @@ const Home = () => {
             chartConfig={chartConfig}
             bezier
           />
+          {/* <Charts /> */}
         </View>
       ) : null}
     </View>

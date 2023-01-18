@@ -19,6 +19,7 @@ const settings = require('../assets/icons/settings.png');
 const user = require('../assets/icons/user.png');
 const logout = require('../assets/icons/logout.png');
 const logos = require('../assets/icons/logos.png');
+const swap = require('../assets/icons/swap.png');
 export default {
   briefcase,
   close,
@@ -41,4 +42,5 @@ export default {
   user,
   logos,
   logout,
+  swap,
 };
