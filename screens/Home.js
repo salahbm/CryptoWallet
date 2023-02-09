@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import React, {useContext, useEffect, useState} from 'react';
-import Charts from '../components/Charts';
+
 import {
   View,
   Text,
@@ -14,24 +14,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {LineChart, Grid} from 'react-native-chart-kit';
 import {COLORS, icons} from '../constants';
-
-const dimentions = Dimensions.get('screen');
-
-const {width: SIZE} = Dimensions.get('window');
 import {DataContext} from '../App';
-
-const chartConfig = {
-  backgroundGradientFrom: COLORS.violent,
-  backgroundGradientTo: COLORS.violent,
-  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2,
-};
-
+import {
+  ChartDot,
+  ChartPath,
+  ChartPathProvider,
+  monotoneCubicInterpolation,
+  LineChart,
+} from '@rainbow-me/animated-charts';
+import moment from 'moment';
+import Chart from '../components/Chart';
+const {width: SIZE} = Dimensions.get('window');
 const Home = () => {
-  const [data, setData] = useState([]);
-  const [loaded, setLoaded] = useState(true);
+  const [coin, SetCoin] = useState([]);
+  const [searchedCoin, setSearchedCoin] = useState([]);
   const [searchedText, setSearchedText] = useState([]);
   const {tokenBalance, wallet, tokenUSD} = React.useContext(DataContext);
   // getting tokens through coingecko api
@@ -41,7 +38,8 @@ const Home = () => {
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=7d`,
       )
       .then(async res => {
-        await setData(res.data);
+        await SetCoin(res.data);
+
         await setSearchedText(res.data);
       })
       .catch(err => console.log(err));
@@ -49,25 +47,17 @@ const Home = () => {
 
   // search logic
   const handleSearch = e => {
-    const exData = [...data];
+    const exData = [...coin];
     const newData = exData.filter(ex => {
       return ex.id.startsWith(e);
     });
     setSearchedText(newData);
-    setLoaded(true);
   };
 
   //charts
-
-  state = {
-    data: {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-      datasets: [
-        {
-          data: [15600, 18011, 17566, 17000, 13429, 15460, 14589, 18829],
-        },
-      ],
-    },
+  // console.log(coin);
+  const handleSearchedCoin = element => {
+    setSearchedCoin(element);
   };
 
   return (
@@ -158,6 +148,7 @@ const Home = () => {
           }}
           onChangeText={val => handleSearch(val)}></TextInput>
       </View>
+
       <View>
         <Text
           style={{
@@ -169,9 +160,9 @@ const Home = () => {
           Scroll Up
         </Text>
       </View>
-      {/* {loaded ? ( */}
-      <View style={{overflow: 'hidden'}}>
-        <ScrollView style={{height: 270}}>
+
+      <View style={{overflow: 'visible'}}>
+        <ScrollView style={{height: 320}}>
           {searchedText.map(element => (
             <View
               key={element.id}
@@ -190,7 +181,9 @@ const Home = () => {
                   alignContent: 'flex-start',
                 }}
               />
-              <TouchableOpacity>
+              <TouchableOpacity
+                key={element.id}
+                onPress={() => handleSearchedCoin(element)}>
                 <Text style={{color: 'white'}}>{element.name}</Text>
               </TouchableOpacity>
               <Text style={{color: COLORS.green}}>
@@ -200,26 +193,29 @@ const Home = () => {
           ))}
         </ScrollView>
       </View>
-      {/* ) : (
-        <ActivityIndicator
-          size="large"
-          color={COLORS.white}
-          style={{marginTop: 150, marginBottom: 50}}
+
+      {searchedCoin?.sparkline_in_7d?.price ? (
+        <Chart
+          chartPrices={
+            searchedCoin.sparkline_in_7d?.price
+            // ? searchedCoin?.sparkline_in_7d?.price
+            // : coin[10]?.sparkline_in_7d?.price
+          }
         />
-      )} */}
-      {loaded ? (
-        <View style={{marginBottom: 70, paddingBottom: 10}}>
-          <LineChart
-            data={this.state.data}
-            width={Dimensions.get('window').width}
-            height={220}
-            yAxisLabel={'$'}
-            chartConfig={chartConfig}
-            bezier
-          />
-          {/* <Charts /> */}
+      ) : (
+        <View
+          style={{
+            marginTop: 50,
+          }}>
+          <Text
+            style={{
+              textAlign: 'center',
+              color: COLORS.white,
+            }}>
+            choose the coin for the chart
+          </Text>
         </View>
-      ) : null}
+      )}
     </View>
   );
 };

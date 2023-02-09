@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
   TextInput,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
@@ -71,6 +72,12 @@ const SignInScreen = ({navigation}) => {
 
   const loginHandle = (username, password) => {
     signIn(username, password);
+    if (username != data.username && password != data.password) {
+      Alert.alert('Invalid user', 'username or password is wrong', [
+        {text: 'Ok'},
+      ]);
+      return;
+    }
   };
 
   const handleValidUser = val => {

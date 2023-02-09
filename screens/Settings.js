@@ -44,7 +44,7 @@ const Settings = ({navigation}) => {
           justifyContent: 'space-between',
         }}>
         <Text style={styles.text}>Welcome:</Text>
-        <Text style={styles.text}>{wallet?.email}</Text>
+        <Text style={styles.text}>{wallet?.userName}</Text>
       </View>
       <View
         style={{

@@ -17,13 +17,14 @@ import Feather from 'react-native-vector-icons/Feather';
 import {COLORS, icons} from '../constants';
 import createWallet from '../ethersJS/createWallet';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {matrixTransform} from 'react-native-svg/lib/typescript/elements/Shape';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'react-native-get-random-values';
+import {v4 as uuidv4} from 'uuid';
 const SignUpScreen = ({navigation}) => {
   const [loaded, setLoaded] = useState(true);
   const [wallet, setWallet] = useState({});
+
   const [data, setData] = useState({
-    email: '',
+    userName: '',
     password: '',
     Confirm_password: '',
     check_textInputChange: false,
@@ -31,20 +32,22 @@ const SignUpScreen = ({navigation}) => {
     confirm_secureTextEntry: true,
     isValideUser: true,
     isValidepassword: true,
+    isValideConfirmPassword: true,
+    isBothPassSame: true,
   });
 
   const textInputChange = val => {
     if (val.length >= 4) {
       setData({
         ...data,
-        email: val,
+        userName: val,
         check_textInputChange: true,
         isValideUser: true,
       });
     } else {
       setData({
         ...data,
-        email: val,
+        userName: val,
         check_textInputChange: false,
         isValideUser: false,
       });
@@ -67,11 +70,19 @@ const SignUpScreen = ({navigation}) => {
     }
   };
   const handleConfirmPassword = val => {
-    setData({
-      ...data,
-      Confirm_password: val,
-      isValidepassword: false,
-    });
+    if (val.trim().length >= 8) {
+      setData({
+        ...data,
+        Confirm_password: val,
+        isValideConfirmPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        password: val,
+        isValideConfirmPassword: false,
+      });
+    }
   };
 
   const updateSecuretextEntry = () => {
@@ -101,6 +112,7 @@ const SignUpScreen = ({navigation}) => {
       confirm_secureTextEntry: !data.confirm_secureTextEntry,
     });
   };
+
   //* WALLET CREATION *//
 
   useEffect(() => {
@@ -118,25 +130,27 @@ const SignUpScreen = ({navigation}) => {
   }, []);
 
   async function save() {
-    const mnemonic = wallet.mnemonic;
-    const address = wallet.address;
-    const privateKey = wallet.privateKey;
-
-    await AsyncStorage.setItem(
-      'userWallet',
-      JSON.stringify({
-        mnemonic,
-        address,
-        privateKey,
-        email: data.email,
+    try {
+      const userWalletData = {
+        mnemonic: wallet.mnemonic,
+        address: wallet.address,
+        privateKey: wallet.privateKey,
+        userName: data.userName,
         password: data.password,
-      }),
-    );
+      };
+      await EncryptedStorage.setItem(
+        'userWalletData',
+        JSON.stringify(userWalletData),
+      );
+    } catch (e) {
+      console.log(e);
+    }
 
     console.log('Sucessfully saved');
-    const saved = await AsyncStorage.getItem('userWallet');
+    const saved = await EncryptedStorage.getItem('userWalletData');
     console.log(saved);
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -217,6 +231,13 @@ const SignUpScreen = ({navigation}) => {
               )}
             </TouchableOpacity>
           </View>
+          {data.isValidepassword ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>
+                Password must be 8 characters or more
+              </Text>
+            </Animatable.View>
+          )}
         </View>
 
         {/* confirm passw */}
@@ -241,7 +262,7 @@ const SignUpScreen = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
-        {data.isValidepassword ? null : (
+        {data.isValideConfirmPassword ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
               Password must be 8 characters or more
