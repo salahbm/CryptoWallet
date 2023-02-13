@@ -94,19 +94,6 @@ const App = () => {
     getBalanceInUSD();
   }, [tokenUSD]);
 
-  // write a function getwallet data and state using use effect
-  useEffect(() => {
-    async function getWalletData() {
-      const walletData = await EncryptedStorage.getItem('userWalletData');
-
-      if (walletData) {
-        setWallet(JSON.parse(walletData));
-      }
-    }
-
-    getWalletData();
-  }, [wallet]);
-
   const initialLoginState = {
     isLoading: true,
     userName: null,
@@ -153,14 +140,14 @@ const App = () => {
   const authContext = useMemo(
     () => ({
       signIn: async (userName, password) => {
-        // setUserToken('usert');
-        // setIsLoading(false);
         let userToken = null;
         userToken = null;
         const savedData = await EncryptedStorage.getItem('userWalletData');
+        setWallet(JSON.parse(savedData));
         const emailFromStorage = JSON.parse(savedData).userName;
         const passFromStorage = JSON.parse(savedData).password;
         console.log(emailFromStorage, passFromStorage);
+        console.log(await EncryptedStorage.getItem('userWalletData'));
         if (userName == emailFromStorage && password == passFromStorage) {
           userToken = '1123';
 
@@ -175,7 +162,8 @@ const App = () => {
       signOut: async () => {
         try {
           await AsyncStorage.removeItem('userToken');
-          await EncryptedStorage.removeItem('userWalletData');
+
+          // await EncryptedStorage.removeItem('userWalletData');
         } catch (e) {
           console.log(e);
         }

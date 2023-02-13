@@ -53,13 +53,13 @@ const SignUpScreen = ({navigation}) => {
       });
     }
   };
-
   const handlePassword = val => {
     if (val.trim().length >= 8) {
       setData({
         ...data,
         password: val,
         isValidepassword: true,
+        isBothPassSame: val === data.Confirm_password,
       });
     } else {
       setData({
@@ -69,17 +69,19 @@ const SignUpScreen = ({navigation}) => {
       });
     }
   };
+
   const handleConfirmPassword = val => {
     if (val.trim().length >= 8) {
       setData({
         ...data,
         Confirm_password: val,
         isValideConfirmPassword: true,
+        isBothPassSame: val === data.password,
       });
     } else {
       setData({
         ...data,
-        password: val,
+        Confirm_password: val,
         isValideConfirmPassword: false,
       });
     }
@@ -117,7 +119,7 @@ const SignUpScreen = ({navigation}) => {
 
   useEffect(() => {
     async function getWalletData() {
-      const walletData = await EncryptedStorage.getItem('userWallet');
+      const walletData = await EncryptedStorage.getItem('userWalletData');
 
       if (walletData) {
         setWallet(JSON.parse(walletData));
@@ -269,6 +271,11 @@ const SignUpScreen = ({navigation}) => {
             </Text>
           </Animatable.View>
         )}
+        {data.isBothPassSame ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMsg}>Password doest match</Text>
+          </Animatable.View>
+        )}
 
         <View style={styles.button}>
           <LinearGradient
@@ -295,26 +302,25 @@ const SignUpScreen = ({navigation}) => {
             </TouchableOpacity>
           </LinearGradient>
         </View>
-        <View style={{paddingTop: 20}}>
+        <View style={styles.button}>
           <LinearGradient
-            style={{borderRadius: 40}}
+            style={[styles.signIn, {borderRadius: 40}]}
             colors={['#0f0c29', '#7902B0']}>
             <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{
-                marginTop: 15,
-                borderRadius: 10,
+              onPress={() => {
+                navigation.goBack();
               }}>
               <Text
                 style={[
-                  styles.textSign,
+                  styles.signIn,
                   {
                     textAlign: 'center',
                     color: 'white',
-                    height: 30,
+                    fontWeight: 'bold',
+                    height: 20,
                   },
                 ]}>
-                Sign in
+                Sign In
               </Text>
             </TouchableOpacity>
           </LinearGradient>
@@ -380,7 +386,8 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    marginTop: 50,
+    marginBottom: 20,
+    marginTop: 20,
   },
   signIn: {
     width: '100%',

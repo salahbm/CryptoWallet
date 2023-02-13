@@ -195,13 +195,7 @@ const Home = () => {
       </View>
 
       {searchedCoin?.sparkline_in_7d?.price ? (
-        <Chart
-          chartPrices={
-            searchedCoin.sparkline_in_7d?.price
-            // ? searchedCoin?.sparkline_in_7d?.price
-            // : coin[10]?.sparkline_in_7d?.price
-          }
-        />
+        <Chart chartPrices={searchedCoin.sparkline_in_7d?.price} />
       ) : (
         <View
           style={{

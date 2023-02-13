@@ -4,11 +4,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from '../screens/Home';
 import Settings from '../screens/Settings';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import {COLORS, icons} from '../constants';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
-import SendScreen from '../screens/SendScreen';
-import {balanceInformation} from '../components/balanceInformation';
 import TransactionsStack from '../screens/TransactionStack';
 const Tab = createBottomTabNavigator();
 
