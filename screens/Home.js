@@ -27,7 +27,7 @@ const Home = () => {
   useEffect(() => {
     axios
       .get(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=7d`,
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=7d&locale=en`,
       )
       .then(async res => {
         await SetCoin(res.data);
@@ -35,7 +35,7 @@ const Home = () => {
         await setSearchedText(res.data);
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [coin]);
 
   // search logic
   const handleSearch = e => {
@@ -58,7 +58,7 @@ const Home = () => {
         style={{
           backgroundColor: COLORS.powderBlue,
           // borderRadius: 90,
-          marginTop: Platform.OS === 'ios' ? 35 : 10,
+          // marginTop: Platform.OS === 'ios' ? 35 : 10,
           borderBottomLeftRadius: 90,
           borderBottomRightRadius: 90,
         }}>
@@ -69,6 +69,7 @@ const Home = () => {
               paddingLeft: 50,
               fontSize: 30,
               fontWeight: 'bold',
+              paddingTop: Platform.OS === 'ios' ? 35 : 10,
             }}>
             Balance:
           </Text>
@@ -77,7 +78,7 @@ const Home = () => {
               color: 'yellow',
               fontSize: 20,
               paddingLeft: 30,
-              paddingTop: 10,
+              paddingTop: Platform.OS === 'ios' ? 45 : 10,
             }}>
             {'$'}
           </Text>
@@ -86,7 +87,7 @@ const Home = () => {
               color: 'black',
               fontSize: 20,
               paddingLeft: 5,
-              paddingTop: 10,
+              paddingTop: Platform.OS === 'ios' ? 45 : 10,
             }}>
             {tokenUSD}
           </Text>
@@ -108,7 +109,7 @@ const Home = () => {
               width: 30,
               height: 30,
               tintColor: 'gray1',
-              marginTop: 10,
+              marginTop: 5,
               marginLeft: 40,
             }}
           />
@@ -157,8 +158,9 @@ const Home = () => {
       <View style={{overflow: 'visible'}}>
         <ScrollView style={{height: 320}}>
           {searchedText.map(element => (
-            <View
+            <TouchableOpacity
               key={element.id}
+              onPress={() => handleSearchedCoin(element)}
               style={{
                 paddingTop: 5,
                 flexDirection: 'row',
@@ -174,21 +176,17 @@ const Home = () => {
                   alignContent: 'flex-start',
                 }}
               />
-              <TouchableOpacity
-                key={element.id}
-                onPress={() => handleSearchedCoin(element)}>
-                <Text style={{color: 'white'}}>{element.name}</Text>
-              </TouchableOpacity>
+              <Text style={{color: 'white'}}>{element.name}</Text>
               <Text style={{color: COLORS.green}}>
                 ${element.current_price}
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
 
       {searchedCoin?.sparkline_in_7d?.price ? (
-        <Chart chartPrices={searchedCoin.sparkline_in_7d?.price} />
+        <Chart chartPrices={searchedCoin[0].sparkline_in_7d?.price} />
       ) : (
         <View
           style={{
