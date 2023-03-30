@@ -9,6 +9,7 @@ import {
   Dimensions,
   TextInput,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
@@ -16,143 +17,148 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import {COLORS, icons} from '../constants';
 import createWallet from '../ethersJS/createWallet';
-import EncryptedStorage from 'react-native-encrypted-storage';
-import 'react-native-get-random-values';
-import {v4 as uuidv4} from 'uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SignUpScreen = ({navigation}) => {
-  const [loaded, setLoaded] = useState(true);
-  const [wallet, setWallet] = useState({});
-
-  const [data, setData] = useState({
-    userName: '',
-    password: '',
-    Confirm_password: '',
-    check_textInputChange: false,
-    secureTextEntry: true,
-    confirm_secureTextEntry: true,
-    isValideUser: true,
-    isValidepassword: true,
-    isValideConfirmPassword: true,
-    isBothPassSame: true,
+  const [wallet, setWallet] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [length, setLength] = useState({
+    userLength: false,
+    passwordLength: false,
+    confirmPasswordLength: false,
+    hide: false,
   });
 
+  useEffect(() => {
+    function createRandomWallet() {
+      if (loading === true) {
+        setTimeout(() => {
+          setWallet(createWallet);
+        }, 100);
+      } else {
+        console.log('waiting to create wallet');
+      }
+    }
+    createRandomWallet();
+  }, [loading]);
+  useEffect(() => {
+    const storeData = async () => {
+      try {
+        const user = {
+          confirmPassword: confirmPassword,
+          password: password,
+          username: username,
+          mnemonic: wallet.mnemonic,
+          address: wallet.address,
+          privateKey: wallet.privateKey,
+        };
+        const users = await AsyncStorage.getItem('users');
+        let parsedUsers = [];
+        if (users) {
+          parsedUsers = JSON.parse(users);
+        }
+        parsedUsers.push(user);
+        await AsyncStorage.setItem('users', JSON.stringify(parsedUsers));
+        const saved = await AsyncStorage.getItem('users');
+        console.log(JSON.parse(saved));
+      } catch (error) {
+        console.log(error, 'error creating wallet');
+      } finally {
+        setLoading(false);
+        navigation.navigate('AddWalletScreen');
+      }
+    };
+
+    const fetchData = async () => {
+      if (password.length === 8 && confirmPassword.length === 8) {
+        if (password === confirmPassword) {
+          setLoading(true);
+          if (wallet.address !== undefined) {
+            storeData();
+          } else {
+            console.log('wallet address is not difined yet');
+          }
+        } else {
+          console.log('cant store data it is invalid');
+        }
+      }
+    };
+    fetchData();
+  }, [wallet, confirmPassword]);
+
+  const Loading = () => {
+    return (
+      <Modal transparent={true} visible={loading}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#ffff',
+          }}>
+          <ActivityIndicator color={COLORS.white} size="large" />
+          <Text style={{color: '#333', fontWeight: 400, fontSize: 16}}>
+            지갑을 만들고 있습니다. 잠시 기다려 주십시오
+          </Text>
+        </View>
+      </Modal>
+    );
+  };
+
+  // // check inputs
+
   const textInputChange = val => {
+    setUsername(val);
     if (val.length >= 4) {
-      setData({
-        ...data,
-        userName: val,
-        check_textInputChange: true,
-        isValideUser: true,
+      setLength({
+        ...length,
+        userLength: false,
       });
     } else {
-      setData({
-        ...data,
-        userName: val,
-        check_textInputChange: false,
-        isValideUser: false,
+      setLength({
+        ...length,
+        userLength: true,
       });
     }
   };
   const handlePassword = val => {
-    if (val.trim().length >= 8) {
-      setData({
-        ...data,
-        password: val,
-        isValidepassword: true,
-        isBothPassSame: val === data.Confirm_password,
+    setPassword(val);
+    if (val.length >= 8) {
+      setLength({
+        ...length,
+        passwordLength: false,
       });
     } else {
-      setData({
-        ...data,
-        password: val,
-        isValidepassword: false,
+      setLength({
+        ...length,
+        passwordLength: true,
       });
     }
   };
 
   const handleConfirmPassword = val => {
-    if (val.trim().length >= 8) {
-      setData({
-        ...data,
-        Confirm_password: val,
-        isValideConfirmPassword: true,
-        isBothPassSame: val === data.password,
+    setConfirmPassword(val);
+    if (val.length >= 8) {
+      setLength({
+        ...length,
+        confirmPasswordLength: false,
       });
     } else {
-      setData({
-        ...data,
-        Confirm_password: val,
-        isValideConfirmPassword: false,
+      setLength({
+        ...length,
+        confirmPasswordLength: true,
       });
     }
   };
 
-  const updateSecuretextEntry = () => {
-    setData({
-      ...data,
-      secureTextEntry: !data.secureTextEntry,
+  function updateVisivility() {
+    setLength({
+      ...length,
+      hide: !length.hide,
     });
-  };
-
-  const handleValidUser = val => {
-    if (val.trim().length >= 4) {
-      setData({
-        ...data,
-        isValideUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        isValideUser: false,
-      });
-    }
-  };
-
-  const updateConfirmSecuretextEntry = () => {
-    setData({
-      ...data,
-      confirm_secureTextEntry: !data.confirm_secureTextEntry,
-    });
-  };
-
-  //* WALLET CREATION *//
-
-  useEffect(() => {
-    async function getWalletData() {
-      const walletData = await EncryptedStorage.getItem('userWalletData');
-
-      if (walletData) {
-        setWallet(JSON.parse(walletData));
-      } else {
-        setWallet(createWallet());
-        setLoaded(false);
-      }
-    }
-    getWalletData();
-  }, []);
-
-  async function save() {
-    try {
-      const userWalletData = {
-        mnemonic: wallet.mnemonic,
-        address: wallet.address,
-        privateKey: wallet.privateKey,
-        userName: data.userName,
-        password: data.password,
-      };
-      await EncryptedStorage.setItem(
-        'userWalletData',
-        JSON.stringify(userWalletData),
-      );
-    } catch (e) {
-      console.log(e);
-    }
-
-    console.log('Sucessfully saved');
-    const saved = await EncryptedStorage.getItem('userWalletData');
-    console.log(saved);
   }
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -165,30 +171,6 @@ const SignUpScreen = ({navigation}) => {
           }}>
           Create Wallet
         </Text>
-        {!loaded ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <ActivityIndicator
-              size="large"
-              color={COLORS.white}
-              style={{marginTop: 300}}
-            />
-            <Text
-              style={{
-                color: COLORS.white,
-                fontSize: 15,
-                textAlign: 'center',
-                marginTop: 50,
-              }}>
-              Please wait {'\n'}
-              wallet creation will take up to 30 secs
-            </Text>
-          </View>
-        ) : null}
       </View>
       <Animatable.View style={styles.footer} animation="fadeInUp">
         <Text>Username</Text>
@@ -197,15 +179,15 @@ const SignUpScreen = ({navigation}) => {
           <TextInput
             placeholder=" Your username"
             style={styles.textInput}
-            autoCapitalize="none"
-            onChangeText={val => textInputChange(val)}
-            onEndEditing={e => handleValidUser(e.nativeEvent.text)}
+            onChangeText={textInputChange}
+            value={username}
           />
-          {data.check_textInputChange ? (
+          {username.length >= 4 && (
             <Feather name="check-circle" color="green" size={20} />
-          ) : null}
+          )}
         </View>
-        {data.isValideUser ? null : (
+
+        {length.userLength && (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
               Username must be 4 characters or more
@@ -213,27 +195,27 @@ const SignUpScreen = ({navigation}) => {
           </Animatable.View>
         )}
 
-        {/* set passw */}
         <View style={[styles.text_footer, {marginTop: 35}]}>
           <Text>Password</Text>
           <View style={styles.action}>
             <FontAwesome name="lock" color="black" size={20} />
             <TextInput
               placeholder=" Your Password"
-              secureTextEntry={data.secureTextEntry ? true : false}
               style={styles.textInput}
               autoCapitalize="none"
-              onChangeText={val => handlePassword(val)}
+              onChangeText={handlePassword}
+              value={password}
+              secureTextEntry={length.hide ? true : false}
             />
-            <TouchableOpacity onPress={updateSecuretextEntry}>
-              {data.secureTextEntry ? (
+            <TouchableOpacity onPress={updateVisivility}>
+              {length.hide ? (
                 <Feather name="eye-off" color="gray" size={20} />
               ) : (
                 <Feather name="eye" color="gray" size={20} />
               )}
             </TouchableOpacity>
           </View>
-          {data.isValidepassword ? null : (
+          {length.passwordLength && (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styles.errorMsg}>
                 Password must be 8 characters or more
@@ -242,21 +224,21 @@ const SignUpScreen = ({navigation}) => {
           )}
         </View>
 
-        {/* confirm passw */}
         <View style={[styles.text_footer, {marginTop: 35}]}>
           <Text>Confirm Password</Text>
           <View style={styles.action}>
             <FontAwesome name="lock" color="black" size={20} />
             <TextInput
               placeholder=" Confirm Password"
-              secureTextEntry={data.confirm_secureTextEntry ? true : false}
               style={styles.textInput}
               autoCapitalize="none"
-              onChangeText={val => handleConfirmPassword(val)}
+              onChangeText={handleConfirmPassword}
+              value={confirmPassword}
+              secureTextEntry={length.hide ? true : false}
             />
 
-            <TouchableOpacity onPress={updateConfirmSecuretextEntry}>
-              {data.confirm_secureTextEntry ? (
+            <TouchableOpacity onPress={updateVisivility}>
+              {length.hide ? (
                 <Feather name="eye-off" color="gray" size={20} />
               ) : (
                 <Feather name="eye" color="gray" size={20} />
@@ -264,29 +246,24 @@ const SignUpScreen = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
-        {data.isValideConfirmPassword ? null : (
+        {length.confirmPasswordLength && (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
               Password must be 8 characters or more
             </Text>
           </Animatable.View>
         )}
-        {data.isBothPassSame ? null : (
+
+        {password.length !== confirmPassword.length && (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>Password doest match</Text>
           </Animatable.View>
         )}
-
         <View style={styles.button}>
           <LinearGradient
             style={[styles.signIn, {borderRadius: 40}]}
             colors={['#0f0c29', '#7902B0']}>
-            <TouchableOpacity
-              onPress={() => {
-                save();
-
-                navigation.navigate('AddWalletScreen');
-              }}>
+            <TouchableOpacity onPress={() => {}}>
               <Text
                 style={[
                   styles.signIn,
@@ -301,8 +278,7 @@ const SignUpScreen = ({navigation}) => {
               </Text>
             </TouchableOpacity>
           </LinearGradient>
-        </View>
-        <View style={styles.button}>
+
           <LinearGradient
             style={[styles.signIn, {borderRadius: 40}]}
             colors={['#0f0c29', '#7902B0']}>
@@ -326,6 +302,7 @@ const SignUpScreen = ({navigation}) => {
           </LinearGradient>
         </View>
       </Animatable.View>
+      {loading ? <Loading /> : null}
     </View>
   );
 };
@@ -386,8 +363,12 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    marginBottom: 20,
+
     marginTop: 20,
+  },
+  button1: {
+    alignItems: 'center',
+    marginTop: 9,
   },
   signIn: {
     width: '100%',
@@ -395,6 +376,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    marginBottom: 10,
   },
   textSign: {
     fontSize: 18,

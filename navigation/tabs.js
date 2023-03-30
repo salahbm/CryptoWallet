@@ -56,16 +56,10 @@ const Tabs = () => {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
-          position: 'absolute',
-          bottom: 8,
           backgroundColor: COLORS.powderBlue,
-          elevation: 0,
-          borderRadius: 50,
-          height: 60,
-          left: 5,
-          right: 5,
-
-          ...styles.shadow,
+          position: 'absolute',
+          bottom: 5,
+          borderRadius: 20,
         },
       })}>
       <Tab.Screen
@@ -154,5 +148,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.5,
     elevation: 5,
   },
-  container: {alignItems: 'center', justifyContent: 'center'},
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

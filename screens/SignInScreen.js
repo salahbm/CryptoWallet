@@ -25,9 +25,10 @@ const SignInScreen = ({navigation}) => {
     secureTextEntry: true,
     isValideUser: true,
     isValidepassword: true,
+    privateKey: '',
+    mnemonic: '',
+    address: '',
   });
-
-  const {signIn} = React.useContext(Authcontext);
 
   const textInputChange = val => {
     if (val.trim().length >= 4) {

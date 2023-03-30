@@ -18,7 +18,6 @@ const App = () => {
   const [tokenUSD, setTokenUSD] = useState(0);
 
   //swap networks
-
   const [network, setNetwork] = useState('Mainnet');
   const [provider, setProvider] = useState(
     new ethers.providers.StaticJsonRpcProvider(
@@ -65,7 +64,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    async function getBalance(address) {
+    async function getBalance() {
       const balance = (await provider.getBalance(wallet.address)).toString();
       const formatted = ethers.utils.formatUnits(balance, 'ether');
 
@@ -94,126 +93,29 @@ const App = () => {
     getBalanceInUSD();
   }, [tokenUSD]);
 
-  const initialLoginState = {
-    isLoading: true,
-    userName: null,
-    userToken: null,
-  };
-
-  const loginReducer = (prevState, action) => {
-    switch (action.type) {
-      case 'RERIEVE_TOKEN':
-        return {
-          ...prevState,
-          userToken: action.token,
-          isLoading: false,
-        };
-      case 'LOGIN':
-        return {
-          ...prevState,
-          userName: action.id,
-          userToken: action.token,
-          isLoading: false,
-        };
-      case 'LOGOUT':
-        return {
-          ...prevState,
-          userName: null,
-          userToken: null,
-          isLoading: false,
-        };
-      case 'REGISTER':
-        return {
-          ...prevState,
-          userName: action.id,
-          userToken: action.token,
-          isLoading: false,
-        };
-    }
-  };
-  const [loginState, dispatch] = React.useReducer(
-    loginReducer,
-    initialLoginState,
-  );
-  //use memo to memorize log/pass
-
-  const authContext = useMemo(
-    () => ({
-      signIn: async (userName, password) => {
-        let userToken = null;
-        userToken = null;
-        const savedData = await EncryptedStorage.getItem('userWalletData');
-        setWallet(JSON.parse(savedData));
-        const emailFromStorage = JSON.parse(savedData).userName;
-        const passFromStorage = JSON.parse(savedData).password;
-        console.log(emailFromStorage, passFromStorage);
-        console.log(await EncryptedStorage.getItem('userWalletData'));
-        if (userName == emailFromStorage && password == passFromStorage) {
-          userToken = '1123';
-
-          try {
-            await AsyncStorage.setItem('userToken', userToken);
-          } catch (e) {
-            console.log(e);
-          }
-        }
-        dispatch({type: 'LOGIN', id: userName, token: userToken});
-      },
-      signOut: async () => {
-        try {
-          await AsyncStorage.removeItem('userToken');
-
-          // await EncryptedStorage.removeItem('userWalletData');
-        } catch (e) {
-          console.log(e);
-        }
-        // setUserToken(null);
-        // setIsLoading(false);
-        dispatch({type: 'LOGOUT'});
-      },
-      signUp: () => {},
-    }),
-    [],
-  );
-
-  useEffect(() => {
-    setTimeout(async () => {
-      let userToken;
-      userToken = null;
-      try {
-        userToken = await AsyncStorage.getItem('userToken');
-      } catch (e) {
-        console.log(e);
-      }
-      dispatch({type: 'RERIEVE_TOKEN', token: userToken});
-      // setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  if (loginState.isLoading) {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size="large" color={COLORS.violent} />
-      </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+  //       <ActivityIndicator size="large" color={COLORS.violent} />
+  //     </View>
+  //   );
+  // }
   return (
-    <Authcontext.Provider value={authContext}>
-      <DataContext.Provider
-        value={{
-          tokenBalance,
-          wallet,
-          tokenUSD,
-          toggleNetwork,
-          netColor,
-          provider,
-          network,
-        }}>
-        <NavigationContainer>
-          {loginState.userToken != null ? <Tabs /> : <RootStackScreen />}
-        </NavigationContainer>
-      </DataContext.Provider>
-    </Authcontext.Provider>
+    <DataContext.Provider
+      value={{
+        tokenBalance,
+        wallet,
+        tokenUSD,
+        toggleNetwork,
+        netColor,
+        provider,
+        network,
+      }}>
+      <NavigationContainer>
+        {/* {loginState != null ? <Tabs /> :  */}
+        <RootStackScreen />
+      </NavigationContainer>
+    </DataContext.Provider>
   );
 };
 
