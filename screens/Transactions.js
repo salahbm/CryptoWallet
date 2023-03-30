@@ -7,6 +7,7 @@ import {
   Animated,
   TouchableOpacity,
   Image,
+  Platform,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import {ethers} from 'ethers';
@@ -60,7 +61,7 @@ const Transactions = ({navigation}) => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-evenly',
-          paddingTop: 30,
+          paddingTop: Platform.OS === 'ios' ? 50 : 30,
         }}>
         <TouchableOpacity
           onPress={() => navigation.navigate('SendScreen')}

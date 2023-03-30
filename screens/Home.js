@@ -12,20 +12,12 @@ import {
   TextInput,
   ActivityIndicator,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
-
+import Chart from '../components/Chart';
 import {COLORS, icons} from '../constants';
 import {DataContext} from '../App';
-import {
-  ChartDot,
-  ChartPath,
-  ChartPathProvider,
-  monotoneCubicInterpolation,
-  LineChart,
-} from '@rainbow-me/animated-charts';
-import moment from 'moment';
-import Chart from '../components/Chart';
-const {width: SIZE} = Dimensions.get('window');
+
 const Home = () => {
   const [coin, SetCoin] = useState([]);
   const [searchedCoin, setSearchedCoin] = useState([]);
@@ -66,7 +58,7 @@ const Home = () => {
         style={{
           backgroundColor: COLORS.powderBlue,
           // borderRadius: 90,
-          paddingTop: 10,
+          marginTop: Platform.OS === 'ios' ? 35 : 10,
           borderBottomLeftRadius: 90,
           borderBottomRightRadius: 90,
         }}>
@@ -145,6 +137,7 @@ const Home = () => {
             borderRadius: 40,
             width: 250,
             color: COLORS.white,
+            height: Platform.OS === 'ios' ? 50 : 40,
           }}
           onChangeText={val => handleSearch(val)}></TextInput>
       </View>

@@ -11,6 +11,7 @@ import {
   Image,
   Button,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import {COLORS, icons, FONTS} from '../constants';
@@ -73,14 +74,22 @@ const SendScreen = ({navigation}) => {
       style={{
         flex: 1,
         backgroundColor: COLORS.violent,
-        paddingTop: 20,
+        paddingTop: Platform.OS === 'ios' ? 40 : 20,
         paddingLeft: 15,
+        padding: 20,
       }}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
         <Image
           source={icons.leftarrow}
           style={{tintColor: COLORS.white, height: 15, width: 15}}
         />
+        <Text style={[styles.text, {flex: 0.58}]}>Send</Text>
       </TouchableOpacity>
 
       <Animatable.View
@@ -157,16 +166,19 @@ const SendScreen = ({navigation}) => {
           marginTop: 60,
         }}>
         <TouchableOpacity
+          style={{
+            backgroundColor: COLORS.white,
+            textAlign: 'center',
+            borderRadius: 30,
+            height: 30,
+            paddingTop: 5,
+          }}
           onPress={() => {
             sendTx();
           }}>
           <Text
             style={{
-              backgroundColor: COLORS.white,
               textAlign: 'center',
-              borderRadius: 30,
-              height: 30,
-              paddingTop: 5,
             }}>
             Send
           </Text>

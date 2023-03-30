@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Platform} from 'react-native';
 import {
   ChartDot,
   ChartPath,
@@ -98,7 +98,6 @@ const Chart = ({containerStyle, chartPrices}) => {
               key={index}
               style={{
                 color: COLORS.white,
-                ...FONTS.body4,
               }}>
               {item}
             </Text>
@@ -113,13 +112,13 @@ const Chart = ({containerStyle, chartPrices}) => {
             smoothingStrategy: 'bezier',
           }}>
           <ChartPath
-            height={150}
+            height={Platform.OS === 'ios' ? 210 : 150}
             width={SIZES.width}
             stroke={COLORS.green}
             strokeWidth={2}
           />
 
-          {/* <ChartDot>
+          <ChartDot>
             <View
               style={{
                 position: 'absolute',
@@ -128,7 +127,6 @@ const Chart = ({containerStyle, chartPrices}) => {
                 alignItems: 'center',
                 backgroundColor: COLORS.black,
               }}>
-
               <View
                 style={{
                   alignItems: 'center',
@@ -149,21 +147,19 @@ const Chart = ({containerStyle, chartPrices}) => {
               <ChartYLabel
                 format={formatUSD}
                 style={{
-                  color: COLORS.white,
-                  ...FONTS.body1,
+                  color: COLORS.bluish,
                 }}
               />
               <ChartXLabel
                 format={formatDateTime}
                 style={{
-                  marginTop: 3,
-                  color: COLORS.yellow,
-                  ...FONTS.body1,
-                  lineHeight: 15,
+                  marginTop: 20,
+                  color: COLORS.white,
+                  lineHeight: 10,
                 }}
               />
             </View>
-          </ChartDot> */}
+          </ChartDot>
         </ChartPathProvider>
       )}
     </View>

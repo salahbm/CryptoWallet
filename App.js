@@ -112,8 +112,8 @@ const App = () => {
         network,
       }}>
       <NavigationContainer>
-        {/* {loginState != null ? <Tabs /> :  */}
-        <RootStackScreen />
+        <Tabs />
+        {/* <RootStackScreen /> */}
       </NavigationContainer>
     </DataContext.Provider>
   );
