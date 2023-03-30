@@ -158,13 +158,14 @@ const SignInScreen = ({navigation}) => {
           )}
         </View>
         <View style={styles.button}>
-          <LinearGradient
-            style={[styles.signIn, {borderRadius: 40}]}
-            colors={['#0f0c29', '#7902B0']}>
-            <TouchableOpacity
-              onPress={() => {
-                loginHandle(data.username, data.password);
-              }}>
+          <TouchableOpacity
+            style={{position: 'absolute', width: '100%', bottom: 80}}
+            onPress={() => {
+              loginHandle(data.username, data.password);
+            }}>
+            <LinearGradient
+              style={[styles.signIn, {borderRadius: 40}]}
+              colors={['#0f0c29', '#7902B0']}>
               <Text
                 style={[
                   styles.signIn,
@@ -177,15 +178,15 @@ const SignInScreen = ({navigation}) => {
                 ]}>
                 Sign in
               </Text>
-            </TouchableOpacity>
-          </LinearGradient>
-        </View>
-        <View style={styles.button}>
-          <LinearGradient
-            style={[styles.signIn, {borderRadius: 40}]}
-            colors={['#0f0c29', '#7902B0']}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('SignUpScreen')}>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('SignUpScreen')}
+            style={{position: 'absolute', width: '100%', bottom: 20}}>
+            <LinearGradient
+              style={styles.signIn}
+              colors={['#0f0c29', '#7902B0']}>
               <Text
                 style={[
                   styles.signIn,
@@ -198,8 +199,8 @@ const SignInScreen = ({navigation}) => {
                 ]}>
                 Sign Up
               </Text>
-            </TouchableOpacity>
-          </LinearGradient>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </Animatable.View>
     </View>
@@ -261,15 +262,14 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 20,
+    flex: 1,
   },
   signIn: {
     width: '100%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 40,
   },
   textSign: {
     fontSize: 18,

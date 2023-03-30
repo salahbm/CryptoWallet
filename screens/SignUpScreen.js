@@ -260,46 +260,43 @@ const SignUpScreen = ({navigation}) => {
           </Animatable.View>
         )}
         <View style={styles.button}>
-          <LinearGradient
-            style={[styles.signIn, {borderRadius: 40}]}
-            colors={['#0f0c29', '#7902B0']}>
-            <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={() => {}}
+            style={{position: 'absolute', width: '100%', bottom: 80}}>
+            <LinearGradient
+              colors={['#0f0c29', '#7902B0']}
+              style={styles.signIn}>
               <Text
-                style={[
-                  styles.signIn,
-                  {
-                    textAlign: 'center',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    height: 20,
-                  },
-                ]}>
+                style={{
+                  textAlign: 'center',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  height: 20,
+                }}>
                 Sign up
               </Text>
-            </TouchableOpacity>
-          </LinearGradient>
+            </LinearGradient>
+          </TouchableOpacity>
 
-          <LinearGradient
-            style={[styles.signIn, {borderRadius: 40}]}
-            colors={['#0f0c29', '#7902B0']}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.goBack();
-              }}>
+          <TouchableOpacity
+            style={{position: 'absolute', width: '100%', bottom: 20}}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <LinearGradient
+              colors={['#0f0c29', '#7902B0']}
+              style={styles.signIn}>
               <Text
-                style={[
-                  styles.signIn,
-                  {
-                    textAlign: 'center',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    height: 20,
-                  },
-                ]}>
+                style={{
+                  textAlign: 'center',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  height: 20,
+                }}>
                 Sign In
               </Text>
-            </TouchableOpacity>
-          </LinearGradient>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </Animatable.View>
       {loading ? <Loading /> : null}
@@ -362,21 +359,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   button: {
-    alignItems: 'center',
-
-    marginTop: 20,
-  },
-  button1: {
-    alignItems: 'center',
-    marginTop: 9,
+    flex: 1,
   },
   signIn: {
     width: '100%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-    marginBottom: 10,
+    borderRadius: 40,
   },
   textSign: {
     fontSize: 18,
