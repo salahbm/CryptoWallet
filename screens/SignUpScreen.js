@@ -18,6 +18,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import {COLORS, icons} from '../constants';
 import createWallet from '../ethersJS/createWallet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Loading} from '../components/Loading';
 const SignUpScreen = ({navigation}) => {
   const [wallet, setWallet] = useState('');
   const [password, setPassword] = useState('');
@@ -87,29 +88,6 @@ const SignUpScreen = ({navigation}) => {
     fetchData();
   }, [wallet]);
 
-  const Loading = () => {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: COLORS.violent,
-        }}>
-        <ActivityIndicator color={COLORS.white} size="large" />
-        <Text
-          style={{
-            color: '#FFFF',
-            fontWeight: 400,
-            fontSize: 16,
-            marginTop: 20,
-          }}>
-          Wallet is being created, Please wait ...
-        </Text>
-      </View>
-    );
-  };
-
   // // check inputs
 
   const textInputChange = val => {
@@ -165,7 +143,7 @@ const SignUpScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <Loading />
+        <Loading text={' Wallet is being created, Please wait ...'} />
       ) : (
         <>
           <View style={styles.header}>
