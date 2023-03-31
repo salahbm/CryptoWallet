@@ -196,10 +196,10 @@ const Home = () => {
           </ScrollView>
         )}
       </View>
-      {console.log(searchedCoin, coin[1]?.name)}
+
       <Chart
         chartPrices={
-          searchedCoin
+          searchedCoin.length !== 0
             ? searchedCoin?.sparkline_in_7d?.price
             : coin[0]?.sparkline_in_7d?.price
         }
