@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "wallet2.app"
-               BlueprintName = "wallet2"
-               ReferencedContainer = "container:wallet2.xcodeproj">
+               BuildableName = "CryptoWallet.app"
+               BlueprintName = "CryptoWallet"
+               ReferencedContainer = "container:CryptoWallet.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "wallet2Tests.xctest"
-               BlueprintName = "wallet2Tests"
-               ReferencedContainer = "container:wallet2.xcodeproj">
+               BuildableName = "CryptoWalletTests.xctest"
+               BlueprintName = "CryptoWalletTests"
+               ReferencedContainer = "container:CryptoWallet.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "wallet2.app"
-            BlueprintName = "wallet2"
-            ReferencedContainer = "container:wallet2.xcodeproj">
+            BuildableName = "CryptoWallet.app"
+            BlueprintName = "CryptoWallet"
+            ReferencedContainer = "container:CryptoWallet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "wallet2.app"
-            BlueprintName = "wallet2"
-            ReferencedContainer = "container:wallet2.xcodeproj">
+            BuildableName = "CryptoWallet.app"
+            BlueprintName = "CryptoWallet"
+            ReferencedContainer = "container:CryptoWallet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
