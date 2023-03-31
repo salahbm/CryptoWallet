@@ -47,7 +47,7 @@ const App = () => {
     await AsyncStorage.removeItem('users');
 
     setLoggedInUser(null);
-  }, []);
+  }, [loggedInUser]);
 
   //swap networks
   const [network, setNetwork] = useState('Mainnet');
@@ -98,7 +98,7 @@ const App = () => {
   useEffect(() => {
     async function getBalance() {
       const balance = (
-        await provider.getBalance(loggedInUser.address)
+        await provider.getBalance(loggedInUser?.address)
       ).toString();
       const formatted = ethers.utils.formatUnits(balance, 'ether');
 

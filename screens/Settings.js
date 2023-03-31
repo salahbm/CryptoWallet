@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {COLORS, icons} from '../constants';
 import {Authcontext} from '../components/context';
-import EncryptedStorage from 'react-native-encrypted-storage';
+
 import Clipboard from '@react-native-clipboard/clipboard';
 import {DataContext} from '../App';
 import {SwitchButton} from '../components/SwitchButton';
@@ -23,9 +23,10 @@ const Settings = ({navigation}) => {
     netColor,
     provider,
     network,
+    handleLogout,
+    loggedInUser,
   } = useContext(DataContext);
 
-  const {signOut} = React.useContext(Authcontext);
   return (
     <View style={styles.container}>
       <View
@@ -44,7 +45,7 @@ const Settings = ({navigation}) => {
           justifyContent: 'space-between',
         }}>
         <Text style={styles.text}>Welcome:</Text>
-        <Text style={styles.text}>{wallet?.userName}</Text>
+        <Text style={styles.text}>{loggedInUser?.username}</Text>
       </View>
       <View
         style={{
@@ -54,12 +55,13 @@ const Settings = ({navigation}) => {
           justifyContent: 'space-between',
         }}>
         <Text style={styles.text1}>Wallet:</Text>
-        <TouchableOpacity onPress={() => Clipboard.setString(wallet?.address)}>
+        <TouchableOpacity
+          onPress={() => Clipboard.setString(loggedInUser?.address)}>
           <Text
             style={[styles.text1, {color: COLORS.green, width: 150}]}
             ellipsizeMode="middle"
             numberOfLines={1}>
-            {wallet?.address}
+            {loggedInUser?.address}
           </Text>
         </TouchableOpacity>
       </View>
@@ -176,8 +178,8 @@ const Settings = ({navigation}) => {
           paddingLeft: 50,
         }}>
         <TouchableOpacity
-          onPress={async () => {
-            signOut();
+          onPress={() => {
+            handleLogout();
           }}>
           <Text
             style={{

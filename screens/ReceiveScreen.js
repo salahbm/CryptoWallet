@@ -15,7 +15,7 @@ import {WebView} from 'react-native-webview';
 import * as Animatable from 'react-native-animatable';
 import {DataContext} from '../App';
 const ReceiveScreen = ({navigation}) => {
-  const {tokenBalance, wallet, tokenUSD} = useContext(DataContext);
+  const {tokenBalance, loggedInUser, tokenUSD} = useContext(DataContext);
 
   return (
     <View
@@ -48,19 +48,20 @@ const ReceiveScreen = ({navigation}) => {
           }}>
           Your PK
         </Text>
-        <TouchableOpacity onPress={() => Clipboard.setString(wallet?.address)}>
+        <TouchableOpacity
+          onPress={() => Clipboard.setString(loggedInUser?.address)}>
           <Text
             style={[{color: COLORS.green, width: 250, fontSize: 20}]}
             ellipsizeMode="middle"
             numberOfLines={1}>
-            {wallet?.address}
+            {loggedInUser?.address}
           </Text>
         </TouchableOpacity>
       </Animatable.View>
       <Animatable.View
         animation={'swing'}
         style={{alignContent: 'center', alignItems: 'center', marginTop: 50}}>
-        <QRCode value={wallet.address} size={250} />
+        <QRCode value={loggedInUser.address} size={250} />
         <Text
           style={{
             color: COLORS.white,
