@@ -6,15 +6,14 @@ export const Loading = ({text}) => {
   return (
     <View
       style={{
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: COLORS.violent,
+        top: 200,
       }}>
       <ActivityIndicator color={COLORS.white} size="large" />
       <Text
         style={{
-          color: '#FFFF',
+          color: 'white',
           fontWeight: 400,
           fontSize: 16,
           marginTop: 20,

@@ -29,7 +29,7 @@ const SignUpScreen = ({navigation}) => {
     userLength: false,
     passwordLength: false,
     confirmPasswordLength: false,
-    hide: false,
+    hide: true,
   });
   useEffect(() => {
     function createRandomWallet() {
@@ -167,6 +167,7 @@ const SignUpScreen = ({navigation}) => {
                 style={styles.textInput}
                 onChangeText={textInputChange}
                 value={username}
+                autoCapitalize="none"
               />
               {username.length >= 4 && (
                 <Feather name="check-circle" color="green" size={20} />

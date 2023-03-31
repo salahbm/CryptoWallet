@@ -44,7 +44,7 @@ const App = () => {
   const handleLogout = useCallback(async () => {
     await AsyncStorage.removeItem('loggedInUser');
     //to delete all the data in storage
-    await AsyncStorage.removeItem('users');
+    // await AsyncStorage.removeItem('users');
 
     setLoggedInUser(null);
   }, [loggedInUser]);

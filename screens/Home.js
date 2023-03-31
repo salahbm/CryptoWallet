@@ -42,7 +42,7 @@ const Home = () => {
     const timer = setTimeout(() => {
       fetchData();
       setLoading(false);
-    }, 700); // 10 second delay between requests
+    }, 1000); // 10 second delay between requests
 
     return () => clearTimeout(timer);
   }, []);

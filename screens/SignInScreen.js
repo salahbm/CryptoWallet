@@ -23,7 +23,7 @@ const SignInScreen = ({navigation}) => {
   const [data, setData] = useState({
     validUser: false,
     isValidepassword: false,
-    hide: false,
+    hide: true,
   });
   const {setLoggedInUser} = useContext(DataContext);
 
