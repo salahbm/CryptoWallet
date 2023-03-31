@@ -44,7 +44,7 @@ const Settings = ({navigation}) => {
           paddingLeft: 50,
           justifyContent: 'space-between',
         }}>
-        <Text style={styles.text}>Welcome:</Text>
+        <Text style={styles.text}>Account:</Text>
         <Text style={styles.text}>{loggedInUser?.username}</Text>
       </View>
       <View
@@ -54,7 +54,7 @@ const Settings = ({navigation}) => {
           paddingLeft: 50,
           justifyContent: 'space-between',
         }}>
-        <Text style={styles.text1}>Wallet:</Text>
+        <Text style={styles.text1}>Address:</Text>
         <TouchableOpacity
           onPress={() => Clipboard.setString(loggedInUser?.address)}>
           <Text
@@ -132,49 +132,7 @@ const Settings = ({navigation}) => {
       <View
         style={{
           flexDirection: 'row',
-          paddingTop: 10,
-          paddingLeft: 50,
-          justifyContent: 'space-between',
-        }}>
-        <Text style={styles.text1}>{'Create New Account'}:</Text>
-        <TouchableOpacity
-          onPress={async () => {
-            signOut();
-          }}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 20,
-            height: 20,
-            backgroundColor: COLORS.white,
-            borderRadius: 40,
-            marginBottom: 200,
-          }}>
-          <Image
-            source={icons.user}
-            style={{
-              width: 40,
-              height: 40,
-
-              tintColor: COLORS.black,
-            }}
-          />
-          <Text
-            style={{
-              color: COLORS.black,
-              fontSize: 10,
-              alignItems: 'center',
-              marginRight: 10,
-            }}>
-            New User
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-
+          marginTop: 20,
           paddingLeft: 50,
         }}>
         <TouchableOpacity
@@ -188,7 +146,7 @@ const Settings = ({navigation}) => {
 
               marginEnd: 10,
             }}>
-            {'Log Out'}
+            Log Out
           </Text>
         </TouchableOpacity>
         <Image

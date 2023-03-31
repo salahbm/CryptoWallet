@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
+  Dimensions,
 } from 'react-native';
 import {COLORS, icons, SIZES, FONTS} from '../constants';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -15,7 +16,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 const QrScreen = ({navigation}) => {
   const [scan, setScan] = useState(false);
   const [result, setResult] = useState();
-
+  const {height} = Dimensions.get('window');
   onSucces = e => {
     setResult(e.data);
     setScan(false);
@@ -30,7 +31,7 @@ const QrScreen = ({navigation}) => {
       style={{
         flex: 1,
         backgroundColor: COLORS.violent,
-        paddingTop: 20,
+        paddingTop: height === 700 ? 60 : 45,
       }}>
       <View
         style={{

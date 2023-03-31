@@ -84,12 +84,13 @@ const SendScreen = ({navigation}) => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          marginLeft: 24,
         }}>
         <Image
           source={icons.leftarrow}
           style={{tintColor: COLORS.white, height: 15, width: 15}}
         />
-        <Text style={[styles.text, {flex: 0.58}]}>Send</Text>
+        <Text style={[styles.text, {flex: 0.63}]}>Send</Text>
       </TouchableOpacity>
 
       <Animatable.View

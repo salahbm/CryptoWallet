@@ -6,6 +6,7 @@ import {
   View,
   Image,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import {COLORS, icons} from '../constants';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -16,13 +17,13 @@ import * as Animatable from 'react-native-animatable';
 import {DataContext} from '../App';
 const ReceiveScreen = ({navigation}) => {
   const {tokenBalance, loggedInUser, tokenUSD} = useContext(DataContext);
-
+  const {height} = Dimensions.get('window');
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: COLORS.violent,
-        paddingTop: 20,
+        paddingTop: height === 700 ? 60 : 45,
       }}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <Image
@@ -31,7 +32,7 @@ const ReceiveScreen = ({navigation}) => {
             tintColor: COLORS.white,
             height: 15,
             width: 15,
-            marginLeft: 15,
+            marginLeft: 24,
           }}
         />
       </TouchableOpacity>
