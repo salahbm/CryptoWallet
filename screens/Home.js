@@ -67,8 +67,8 @@ const Home = () => {
       <View
         style={{
           backgroundColor: COLORS.powderBlue,
-          borderBottomLeftRadius: 90,
-          borderBottomRightRadius: 90,
+          borderBottomLeftRadius: 40,
+          borderBottomRightRadius: 40,
         }}>
         <View style={{flexDirection: 'row'}}>
           <Text
@@ -141,10 +141,10 @@ const Home = () => {
           textAlign="center"
           style={{
             borderWidth: 1,
-            borderColor: COLORS.powderBlue,
+
             backgroundColor: COLORS.powderBlue,
-            borderRadius: 40,
-            width: 250,
+            borderRadius: 20,
+            width: 300,
             color: COLORS.white,
             height: Platform.OS === 'ios' ? 50 : 40,
           }}
