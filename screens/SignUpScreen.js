@@ -30,80 +30,83 @@ const SignUpScreen = ({navigation}) => {
     confirmPasswordLength: false,
     hide: false,
   });
-
   useEffect(() => {
     function createRandomWallet() {
       if (loading === true) {
         setTimeout(() => {
           setWallet(createWallet);
-        }, 100);
-      } else {
-        console.log('waiting to create wallet');
+        }, 200);
       }
     }
     createRandomWallet();
   }, [loading]);
-  useEffect(() => {
-    const storeData = async () => {
-      try {
-        const user = {
-          confirmPassword: confirmPassword,
-          password: password,
-          username: username,
-          mnemonic: wallet.mnemonic,
-          address: wallet.address,
-          privateKey: wallet.privateKey,
-        };
-        const users = await AsyncStorage.getItem('users');
-        let parsedUsers = [];
-        if (users) {
-          parsedUsers = JSON.parse(users);
-        }
-        parsedUsers.push(user);
-        await AsyncStorage.setItem('users', JSON.stringify(parsedUsers));
-        const saved = await AsyncStorage.getItem('users');
-        console.log(JSON.parse(saved));
-      } catch (error) {
-        console.log(error, 'error creating wallet');
-      } finally {
-        setLoading(false);
-        navigation.navigate('AddWalletScreen');
-      }
-    };
 
-    const fetchData = async () => {
-      if (password.length === 8 && confirmPassword.length === 8) {
-        if (password === confirmPassword) {
-          setLoading(true);
-          if (wallet.address !== undefined) {
-            storeData();
-          } else {
-            console.log('wallet address is not difined yet');
-          }
-        } else {
-          console.log('cant store data it is invalid');
-        }
+  const storeData = async () => {
+    try {
+      const user = {
+        confirmPassword: confirmPassword,
+        password: password,
+        username: username,
+        mnemonic: wallet.mnemonic,
+        address: wallet.address,
+        privateKey: wallet.privateKey,
+      };
+      const users = await AsyncStorage.getItem('users');
+      let parsedUsers = [];
+      if (users) {
+        parsedUsers = JSON.parse(users);
       }
-    };
+      parsedUsers.push(user);
+      await AsyncStorage.setItem('users', JSON.stringify(parsedUsers));
+      const saved = await AsyncStorage.getItem('users');
+      console.log(JSON.parse(saved));
+    } catch (error) {
+      console.log(error, 'error creating wallet');
+    } finally {
+      setLoading(false);
+      navigation.navigate('AddWalletScreen');
+    }
+  };
+
+  const fetchData = async () => {
+    if (password.length >= 8 && confirmPassword.length >= 8) {
+      if (password === confirmPassword) {
+        setLoading(true);
+        if (wallet.address !== undefined) {
+          await storeData();
+        } else {
+          console.log('wallet data is not defined yet');
+        }
+      } else {
+        console.log('cant store data it is invalid');
+      }
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, [wallet, confirmPassword]);
+  }, [wallet]);
 
   const Loading = () => {
     return (
-      <Modal transparent={true} visible={loading}>
-        <View
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: COLORS.violent,
+        }}>
+        <ActivityIndicator color={COLORS.white} size="large" />
+        <Text
           style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#ffff',
+            color: '#FFFF',
+            fontWeight: 400,
+            fontSize: 16,
+            marginTop: 20,
           }}>
-          <ActivityIndicator color={COLORS.white} size="large" />
-          <Text style={{color: '#333', fontWeight: 400, fontSize: 16}}>
-            지갑을 만들고 있습니다. 잠시 기다려 주십시오
-          </Text>
-        </View>
-      </Modal>
+          Wallet is being created, Please wait ...
+        </Text>
+      </View>
     );
   };
 
@@ -161,145 +164,151 @@ const SignUpScreen = ({navigation}) => {
   }
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text
-          style={{
-            color: COLORS.white,
-            fontSize: 40,
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}>
-          Create Wallet
-        </Text>
-      </View>
-      <Animatable.View style={styles.footer} animation="fadeInUp">
-        <Text>Username</Text>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color="black" size={20} />
-          <TextInput
-            placeholder=" Your username"
-            style={styles.textInput}
-            onChangeText={textInputChange}
-            value={username}
-          />
-          {username.length >= 4 && (
-            <Feather name="check-circle" color="green" size={20} />
-          )}
-        </View>
-
-        {length.userLength && (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Username must be 4 characters or more
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <View style={styles.header}>
+            <Text
+              style={{
+                color: COLORS.white,
+                fontSize: 40,
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}>
+              Create Wallet
             </Text>
-          </Animatable.View>
-        )}
-
-        <View style={[styles.text_footer, {marginTop: 35}]}>
-          <Text>Password</Text>
-          <View style={styles.action}>
-            <FontAwesome name="lock" color="black" size={20} />
-            <TextInput
-              placeholder=" Your Password"
-              style={styles.textInput}
-              autoCapitalize="none"
-              onChangeText={handlePassword}
-              value={password}
-              secureTextEntry={length.hide ? true : false}
-            />
-            <TouchableOpacity onPress={updateVisivility}>
-              {length.hide ? (
-                <Feather name="eye-off" color="gray" size={20} />
-              ) : (
-                <Feather name="eye" color="gray" size={20} />
-              )}
-            </TouchableOpacity>
           </View>
-          {length.passwordLength && (
-            <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.errorMsg}>
-                Password must be 8 characters or more
-              </Text>
-            </Animatable.View>
-          )}
-        </View>
 
-        <View style={[styles.text_footer, {marginTop: 35}]}>
-          <Text>Confirm Password</Text>
-          <View style={styles.action}>
-            <FontAwesome name="lock" color="black" size={20} />
-            <TextInput
-              placeholder=" Confirm Password"
-              style={styles.textInput}
-              autoCapitalize="none"
-              onChangeText={handleConfirmPassword}
-              value={confirmPassword}
-              secureTextEntry={length.hide ? true : false}
-            />
-
-            <TouchableOpacity onPress={updateVisivility}>
-              {length.hide ? (
-                <Feather name="eye-off" color="gray" size={20} />
-              ) : (
-                <Feather name="eye" color="gray" size={20} />
+          <Animatable.View style={styles.footer} animation="fadeInUp">
+            <Text>Username</Text>
+            <View style={styles.action}>
+              <FontAwesome name="user-o" color="black" size={20} />
+              <TextInput
+                placeholder=" Your username"
+                style={styles.textInput}
+                onChangeText={textInputChange}
+                value={username}
+              />
+              {username.length >= 4 && (
+                <Feather name="check-circle" color="green" size={20} />
               )}
-            </TouchableOpacity>
-          </View>
-        </View>
-        {length.confirmPasswordLength && (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>
-              Password must be 8 characters or more
-            </Text>
-          </Animatable.View>
-        )}
+            </View>
 
-        {password.length !== confirmPassword.length && (
-          <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Password doest match</Text>
-          </Animatable.View>
-        )}
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={() => {}}
-            style={{position: 'absolute', width: '100%', bottom: 80}}>
-            <LinearGradient
-              colors={['#0f0c29', '#7902B0']}
-              style={styles.signIn}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  height: 20,
-                }}>
-                Sign up
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+            {length.userLength && (
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.errorMsg}>
+                  Username must be 4 characters or more
+                </Text>
+              </Animatable.View>
+            )}
 
-          <TouchableOpacity
-            style={{position: 'absolute', width: '100%', bottom: 20}}
-            onPress={() => {
-              navigation.goBack();
-            }}>
-            <LinearGradient
-              colors={['#0f0c29', '#7902B0']}
-              style={styles.signIn}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  height: 20,
+            <View style={[styles.text_footer, {marginTop: 35}]}>
+              <Text>Password</Text>
+              <View style={styles.action}>
+                <FontAwesome name="lock" color="black" size={20} />
+                <TextInput
+                  placeholder=" Your Password"
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  onChangeText={handlePassword}
+                  value={password}
+                  secureTextEntry={length.hide ? true : false}
+                />
+                <TouchableOpacity onPress={updateVisivility}>
+                  {length.hide ? (
+                    <Feather name="eye-off" color="gray" size={20} />
+                  ) : (
+                    <Feather name="eye" color="gray" size={20} />
+                  )}
+                </TouchableOpacity>
+              </View>
+              {length.passwordLength && (
+                <Animatable.View animation="fadeInLeft" duration={500}>
+                  <Text style={styles.errorMsg}>
+                    Password must be 8 characters or more
+                  </Text>
+                </Animatable.View>
+              )}
+            </View>
+
+            <View style={[styles.text_footer, {marginTop: 35}]}>
+              <Text>Confirm Password</Text>
+              <View style={styles.action}>
+                <FontAwesome name="lock" color="black" size={20} />
+                <TextInput
+                  placeholder=" Confirm Password"
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  onChangeText={handleConfirmPassword}
+                  value={confirmPassword}
+                  secureTextEntry={length.hide ? true : false}
+                />
+
+                <TouchableOpacity onPress={updateVisivility}>
+                  {length.hide ? (
+                    <Feather name="eye-off" color="gray" size={20} />
+                  ) : (
+                    <Feather name="eye" color="gray" size={20} />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+            {length.confirmPasswordLength && (
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.errorMsg}>
+                  Password must be 8 characters or more
+                </Text>
+              </Animatable.View>
+            )}
+
+            {password.length !== confirmPassword.length && (
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.errorMsg}>Password doest match</Text>
+              </Animatable.View>
+            )}
+            <View style={styles.button}>
+              <TouchableOpacity
+                onPress={() => fetchData()}
+                style={{position: 'absolute', width: '100%', bottom: 80}}>
+                <LinearGradient
+                  colors={['#0f0c29', '#7902B0']}
+                  style={styles.signIn}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      color: 'white',
+                      fontWeight: 'bold',
+                      height: 20,
+                    }}>
+                    Sign up
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{position: 'absolute', width: '100%', bottom: 20}}
+                onPress={() => {
+                  navigation.goBack();
                 }}>
-                Sign In
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </Animatable.View>
-      {loading ? <Loading /> : null}
+                <LinearGradient
+                  colors={['#0f0c29', '#7902B0']}
+                  style={styles.signIn}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      color: 'white',
+                      fontWeight: 'bold',
+                      height: 20,
+                    }}>
+                    Sign In
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </Animatable.View>
+        </>
+      )}
     </View>
   );
 };

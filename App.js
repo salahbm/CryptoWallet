@@ -112,8 +112,8 @@ const App = () => {
         network,
       }}>
       <NavigationContainer>
-        <Tabs />
-        {/* <RootStackScreen /> */}
+        {/* <Tabs /> */}
+        <RootStackScreen />
       </NavigationContainer>
     </DataContext.Provider>
   );

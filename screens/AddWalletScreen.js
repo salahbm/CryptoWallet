@@ -1,18 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {View, TouchableOpacity, Text, Button, Image} from 'react-native';
-import {ethers} from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS, FONTS, icons, SIZES} from '../constants';
-import createWallet from '../ethersJS/createWallet';
 import * as Animatable from 'react-native-animatable';
-import EncryptedStorage from 'react-native-encrypted-storage';
 const AddWalletScreen = ({navigation}) => {
-  //save wallet
-
-  const [wallet, setWallet] = useState({});
+  const [wallet, setWallet] = useState();
   useEffect(() => {
     async function getWalletData() {
-      const walletData = await EncryptedStorage.getItem('userWalletData');
+      const walletData = await AsyncStorage.getItem('user');
       //console.log(walletData);
       if (walletData) {
         setWallet(JSON.parse(walletData));
