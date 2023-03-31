@@ -5,7 +5,14 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from '../screens/Home';
 import Settings from '../screens/Settings';
 import {COLORS, icons} from '../constants';
-import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Platform,
+} from 'react-native';
 import TransactionsStack from '../screens/TransactionStack';
 const Tab = createBottomTabNavigator();
 
@@ -58,8 +65,10 @@ const Tabs = () => {
         tabBarStyle: {
           backgroundColor: COLORS.powderBlue,
           position: 'absolute',
-          bottom: 5,
           borderRadius: 20,
+          justifyContent: 'center',
+          alignItems: 'center',
+          bottom: 0,
         },
       })}>
       <Tab.Screen

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState, useContext} from 'react';
 
 import {
   View,
@@ -17,25 +17,35 @@ import {
 import Chart from '../components/Chart';
 import {COLORS, icons} from '../constants';
 import {DataContext} from '../App';
+import {Loading} from '../components/Loading';
 
 const Home = () => {
-  const [coin, SetCoin] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [coin, setCoin] = useState([]);
   const [searchedCoin, setSearchedCoin] = useState([]);
   const [searchedText, setSearchedText] = useState([]);
-  const {tokenBalance, wallet, tokenUSD} = React.useContext(DataContext);
+  const {tokenBalance, wallet, tokenUSD} = useContext(DataContext);
   // getting tokens through coingecko api
   useEffect(() => {
-    axios
-      .get(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=7d&locale=en`,
-      )
-      .then(async res => {
-        await SetCoin(res.data);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=7d`,
+        );
+        setCoin(response.data);
+        setSearchedText(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-        await setSearchedText(res.data);
-      })
-      .catch(err => console.log(err));
-  }, [coin]);
+    const timer = setTimeout(() => {
+      fetchData();
+      setLoading(false);
+    }, 700); // 10 second delay between requests
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // search logic
   const handleSearch = e => {
@@ -47,7 +57,7 @@ const Home = () => {
   };
 
   //charts
-  // console.log(coin);
+
   const handleSearchedCoin = element => {
     setSearchedCoin(element);
   };
@@ -57,8 +67,6 @@ const Home = () => {
       <View
         style={{
           backgroundColor: COLORS.powderBlue,
-          // borderRadius: 90,
-          // marginTop: Platform.OS === 'ios' ? 35 : 10,
           borderBottomLeftRadius: 90,
           borderBottomRightRadius: 90,
         }}>
@@ -140,9 +148,9 @@ const Home = () => {
             color: COLORS.white,
             height: Platform.OS === 'ios' ? 50 : 40,
           }}
-          onChangeText={val => handleSearch(val)}></TextInput>
+          onChangeText={val => handleSearch(val)}
+        />
       </View>
-
       <View>
         <Text
           style={{
@@ -156,51 +164,46 @@ const Home = () => {
       </View>
 
       <View style={{overflow: 'visible'}}>
-        <ScrollView style={{height: 320}}>
-          {searchedText.map(element => (
-            <TouchableOpacity
-              key={element.id}
-              onPress={() => handleSearchedCoin(element)}
-              style={{
-                paddingTop: 5,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingHorizontal: 10,
-              }}>
-              <Image
-                source={{uri: element.image}}
+        {loading ? (
+          <Loading text={'Downloading Data...'} />
+        ) : (
+          <ScrollView style={{height: 320}}>
+            {searchedText.map(element => (
+              <TouchableOpacity
+                key={element.id}
+                onPress={() => handleSearchedCoin(element)}
                 style={{
-                  height: 30,
-                  width: 30,
-                  alignContent: 'flex-start',
-                }}
-              />
-              <Text style={{color: 'white'}}>{element.name}</Text>
-              <Text style={{color: COLORS.green}}>
-                ${element.current_price}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                  paddingTop: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingHorizontal: 10,
+                }}>
+                <Image
+                  source={{uri: element.image}}
+                  style={{
+                    height: 30,
+                    width: 30,
+                    alignContent: 'flex-start',
+                  }}
+                />
+                <Text style={{color: 'white'}}>{element.name}</Text>
+                <Text style={{color: COLORS.green}}>
+                  ${element.current_price}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
       </View>
-
-      {searchedCoin?.sparkline_in_7d?.price ? (
-        <Chart chartPrices={searchedCoin[0].sparkline_in_7d?.price} />
-      ) : (
-        <View
-          style={{
-            marginTop: 50,
-          }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              color: COLORS.white,
-            }}>
-            choose the coin for the chart
-          </Text>
-        </View>
-      )}
+      {console.log(searchedCoin, coin[1]?.name)}
+      <Chart
+        chartPrices={
+          searchedCoin
+            ? searchedCoin?.sparkline_in_7d?.price
+            : coin[0]?.sparkline_in_7d?.price
+        }
+      />
     </View>
   );
 };
